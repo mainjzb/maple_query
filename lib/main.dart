@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'dialog.dart';
 import 'character.dart';
@@ -37,14 +38,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TextEditingController field = TextEditingController();
-  String pasteValue = '';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("maple_query 0.1")),
-      body: MyGridView(),
+      appBar: AppBar(
+        title: FutureBuilder(
+          future: PackageInfo.fromPlatform(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text("maple_query");
+            }
+            return Text("maple_query ${snapshot.data?.version}");
+          },
+        ),
+      ),
+      body: const MyGridView(),
     );
   }
 }
@@ -79,7 +87,9 @@ class _MyGridViewState extends State<MyGridView> {
         var c = await showDialog(
           context: context,
           builder: (BuildContext context) {
-            return MyFormDialog(buttons: buttons,);
+            return MyFormDialog(
+              buttons: buttons,
+            );
           },
         );
         //print(name);
@@ -106,7 +116,7 @@ class _MyGridViewState extends State<MyGridView> {
     buttons.insert(
       buttons.length - 1,
       MyButton2(
-        onLongPress: () =>delete(char.name),
+        onLongPress: () => delete(char.name),
         c: char,
       ),
     );

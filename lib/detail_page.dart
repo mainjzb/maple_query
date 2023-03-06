@@ -1,10 +1,7 @@
-import 'package:d_chart/d_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:maple_query/chart3.dart';
 
 import 'character.dart';
-import 'chart.dart';
-import 'chart2.dart';
 import 'info.dart';
 
 class SecondPage extends StatelessWidget {
@@ -15,6 +12,7 @@ class SecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = c.history.list;
+    final nextLevel =  (((l[l.length-1].level+1) / 5).ceil()) * 5;
     final oneDayExpect = calcOneDay(l).toStringAsFixed(1);
 
     List<Widget> list = [
@@ -34,7 +32,7 @@ class SecondPage extends StatelessWidget {
         Text('联盟战斗力：${c.legionPower! ~/ 1000000}m (每日${c.legionCoinPerDay}币)'),
         Text('联盟币上限：'),
         const SizedBox(height: 30),
-        Text('参照最近1天还有$oneDayExpect天'),
+        Text('参照最近1天到达$nextLevel还有$oneDayExpect天'),
         //BarChartSample3(),
       ]);
     }
@@ -59,16 +57,14 @@ class SecondPage extends StatelessWidget {
               ),
             ),
             Flexible(
-              flex: 55,
+              flex: 60,
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(
-                    maxWidth: 900, // 设置最大宽度为 400 像素
-                    maxHeight: 900, // 设置最大高度为 300 像素
+                    maxWidth: 1000, // 设置最大宽度为 400 像素
+                    maxHeight: 1000, // 设置最大高度为 300 像素
                   ),
                   child: CC(c.history),
-
-
                 ),
               ),
             ),
@@ -83,8 +79,23 @@ class SecondPage extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: list,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: list,
+            ),
+            Flexible(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 1000, // 设置最大宽度为 400 像素
+                    maxHeight: 1000, // 设置最大高度为 300 像素
+                  ),
+                  child: CC(c.history),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

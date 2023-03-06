@@ -314,30 +314,28 @@ int totalExp(int level) {
   return total;
 }
 
-int expDiff(int currentLevel, int currentExp, int prevLevel, int prevExp ){
+int expDiff(int currentLevel, int currentExp, int prevLevel, int prevExp) {
   int total = 0;
-  for(var i = prevLevel; i< currentLevel; i++){
-     total += levelExp[i]!;
+  for (var i = prevLevel; i < currentLevel; i++) {
+    total += levelExp[i]!;
   }
   total += currentExp - prevExp;
 
   return total;
 }
 
-double calcOneDay(List<DayExp> l){
-  if( l.length <2){
+double calcOneDay(List<DayExp> l) {
+  if (l.length < 2) {
     return 0;
   }
-  final curr = l[l.length-1];
-  final prev = l[l.length-2];
-  final nextLevel =  ((curr.level / 5).ceil()) * 5;
-  final oneDayExp = expDiff(curr.level,curr.exp,prev.level,prev.exp);
-  final needExp = expDiff(nextLevel ,0,l[l.length-1].level, l[l.length-1].exp);
+  final curr = l[l.length - 1];
+  final prev = l[l.length - 2];
+  final nextLevel = (((curr.level + 1) / 5).ceil()) * 5;
+  final oneDayExp = expDiff(curr.level, curr.exp, prev.level, prev.exp);
+  final needExp = expDiff(nextLevel, 0, curr.level, curr.exp);
 
-  if( oneDayExp == 0) {
+  if (oneDayExp == 0) {
     return 0;
   }
-  return needExp/oneDayExp;
+  return needExp / oneDayExp;
 }
-
-
