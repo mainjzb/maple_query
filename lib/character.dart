@@ -5,6 +5,12 @@ import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 
+class UnableFindException implements Exception {
+  String cause;
+  UnableFindException(this.cause);
+}
+
+
 class DayExp {
   final String day;
   final int level;
@@ -153,11 +159,13 @@ Future<Character> get(name) async {
   try {
     final response = await http.get(url);
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       var c = Character.fromJson(jsonDecode(response.body));
       await c.getImageFile();
       return c;
+    }
+    if(response.statusCode == 404 ){
+      final json= jsonDecode(response.body);
+      throw UnableFindException(json['message']);
     }
   } catch (e) {
     rethrow;

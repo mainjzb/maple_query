@@ -1,5 +1,9 @@
 import 'character.dart';
 
+Map<int, int> legionCoinCap = {
+
+};
+
 Map<int, int> levelExp = {
   1: 15,
   2: 34,

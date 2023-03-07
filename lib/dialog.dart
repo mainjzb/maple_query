@@ -5,7 +5,7 @@ import 'button.dart';
 class MyFormDialog extends StatefulWidget {
   final List<Widget> buttons;
 
-  const MyFormDialog({super.key, required this.buttons});
+  MyFormDialog({super.key, required this.buttons});
 
   @override
   _MyFormDialogState createState() => _MyFormDialogState();
@@ -15,32 +15,65 @@ class _MyFormDialogState extends State<MyFormDialog> {
   var _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   String _name = "";
-  // bool _formFailed = false;
+  bool isOpen = false;
 
-  Text t = const Text("");
+  Text errorText = const Text("");
 
-  void submit() async {
+  Future<void> submit() async {
     final navigator = Navigator.of(context);
     try {
       setState(() {
         _isLoading = true;
-        t = const Text("");
+        errorText = const Text("");
       });
+
       final form = _formKey.currentState;
       if (!form!.validate()) {
+        setState(() => _isLoading = false);
         return;
       }
       form.save();
-      var c = await get(_name);
-      navigator.pop(c);
-    } catch (e) {
-      print(e);
+
+      final character = await get(_name.trim());
+      if (isOpen) {
+        navigator.pop(character);
+      }
+    } on UnableFindException {
+      if (!isOpen) {
+        return;
+      }
       setState(() {
-        t = const Text("网络错误", style: TextStyle(color: Colors.redAccent));
+        _isLoading = false;
+        errorText =
+            const Text("不存在此角色", style: TextStyle(color: Colors.redAccent));
       });
-    } finally {
-      setState(() => _isLoading = false);
+    } catch (e) {
+      if (!isOpen) {
+        return;
+      }
+      setState(() {
+        errorText =
+            const Text("网络错误", style: TextStyle(color: Colors.redAccent));
+        _isLoading = false;
+      });
     }
+
+    if (!isOpen) {
+      return;
+    }
+    setState(() => _isLoading = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    isOpen = true;
+  }
+
+  @override
+  void dispose() {
+    isOpen = false;
+    super.dispose();
   }
 
   @override
@@ -67,6 +100,7 @@ class _MyFormDialogState extends State<MyFormDialog> {
                   submit();
                 },
                 validator: (String? value) {
+                  value = value?.trim();
                   if (value == null || value.length < 4) {
                     return '请输入正确的名字';
                   }
@@ -84,11 +118,13 @@ class _MyFormDialogState extends State<MyFormDialog> {
         ),
       ),
       actions: [
-        t,
+        errorText,
         _isLoading
             ? const CircularProgressIndicator()
             : ElevatedButton(
-                onPressed: submit,
+                onPressed: () {
+                  submit();
+                },
                 child: const Text("添加"),
               ),
       ],

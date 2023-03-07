@@ -4,17 +4,6 @@ import 'package:flutter/material.dart';
 import 'character.dart';
 import 'info.dart';
 
-String toTB(int value){
-  if(value>1000000000000 ){
-    return "${(value/1.0/1000000000000).toStringAsFixed(1)}T";
-  }
-  else if( value>1000000000 ){
-    return "${(value/1.0/1000000000).toStringAsFixed(1)}B";
-  }else if(value>1000000){
-    return "${(value/1.0/1000000000).toStringAsFixed(1)}M";
-  }
-  return (value).toString();
-}
 
 class CC extends StatelessWidget {
   final History history;
@@ -46,12 +35,12 @@ class CC extends StatelessWidget {
         axisLineTick: 2,
         axisLinePointTick: 2,
         axisLinePointWidth: 0,
-        axisLineColor: Colors.green,
+        axisLineColor: Colors.blue,
         verticalDirection: false,
         measureLabelPaddingToAxisLine: 0,
         showMeasureLine: false,
         measureLabelColor:Colors.transparent,
-        barColor: (barData, index, id) => Colors.green.shade300,
+        barColor: (barData, index, id) => Colors.blue.shade300,
         // barColor: (barData, index, id) => barData['measure'] >= 4
         //     ? Colors.green.shade300
         //     : Colors.green.shade700,
@@ -61,7 +50,7 @@ class CC extends StatelessWidget {
             return "${(value/1.0/1000000000000).toStringAsFixed(1)}T";
           }
           else if( value>1000000000 ){
-            return "${(value/1.0/1000000000).toStringAsFixed(0)}B";
+            return "${(value/1.0/1000000000).toStringAsFixed(1)}B";
           }else if(value>1000000){
             return "${(value/1.0/1000000000).toStringAsFixed(1)}M";
           }
@@ -69,7 +58,8 @@ class CC extends StatelessWidget {
         },
         showBarValue: true,
         barValueFontSize:12,
-        barValuePosition: BarValuePosition.outside,
+        barValuePosition: BarValuePosition.auto,
+        barValueAnchor: BarValueAnchor.end,
       ),
     );
   }
