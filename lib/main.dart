@@ -84,7 +84,7 @@ class _MyApp2State extends State<MyApp2> {
             child: Center(
               child: childWidget[_selectedIndex],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -101,19 +101,32 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: FutureBuilder(
-          future: PackageInfo.fromPlatform(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text("maple_query");
-            }
-            return Text("maple_query ${snapshot.data?.version}");
-          },
-        ),
-      ),
-      body: const MyGridView(),
+    return Navigator(
+      initialRoute: '/',
+      onGenerateRoute: (RouteSettings settins) {
+        WidgetBuilder builder;
+        switch (settins.name) {
+          default:
+            builder = (context) => Scaffold(
+                  appBar: AppBar(
+                    title: FutureBuilder(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text("maple_query");
+                        }
+                        return Text("maple_query ${snapshot.data?.version}");
+                      },
+                    ),
+                  ),
+                  body: const MyGridView(),
+                );
+            ;
+            break;
+        }
+        return MaterialPageRoute(builder: builder);
+      },
     );
   }
 }
