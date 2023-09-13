@@ -25,7 +25,68 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const HomePage(),
+      // home: const HomePage(),
+      home: const MyApp2(),
+    );
+  }
+}
+
+class MyApp2 extends StatefulWidget {
+  const MyApp2({super.key});
+
+  @override
+  State<MyApp2> createState() => _MyApp2State();
+}
+
+class _MyApp2State extends State<MyApp2> {
+  var _selectedIndex = 0;
+  var childWidget = const [
+    HomePage(),
+    Text('selectedIndex: 1'),
+    Text('selectedIndex: 2'),
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      //row 做为 body 布局
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (int index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            labelType: NavigationRailLabelType.all,
+            destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.favorite),
+                selectedIcon: Icon(Icons.favorite),
+                label: Text('First'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.book),
+                selectedIcon: Icon(Icons.book),
+                label: Text('Second'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.star),
+                selectedIcon: Icon(Icons.star),
+                label: Text('Third'),
+              ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // This is the main content.
+          //Expanded 占满剩下屏幕空间
+          Expanded(
+            child: Center(
+              child: childWidget[_selectedIndex],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -34,25 +95,38 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: FutureBuilder(
-          future: PackageInfo.fromPlatform(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("maple_query");
-            }
-            return Text("maple_query ${snapshot.data?.version}");
-          },
-        ),
-      ),
-      body: const MyGridView(),
+    return Navigator(
+      initialRoute: '/',
+      onGenerateRoute: (RouteSettings settins) {
+        WidgetBuilder builder;
+        switch (settins.name) {
+          default:
+            builder = (context) => Scaffold(
+                  appBar: AppBar(
+                    title: FutureBuilder(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text("maple_query");
+                        }
+                        return Text("maple_query ${snapshot.data?.version}");
+                      },
+                    ),
+                  ),
+                  body: const MyGridView(),
+                );
+            ;
+            break;
+        }
+        return MaterialPageRoute(builder: builder);
+      },
     );
   }
 }
@@ -85,7 +159,7 @@ class _MyGridViewState extends State<MyGridView> {
     buttons.add(OutlinedButton(
       onPressed: () async {
         var c = await showDialog(
-         context: context,
+          context: context,
           builder: (BuildContext context) {
             return MyFormDialog(
               buttons: buttons,
@@ -117,7 +191,7 @@ class _MyGridViewState extends State<MyGridView> {
       buttons.length - 1,
       MyButton2(
         onLongPress: () => delete(char.name),
-        c: char,
+        oc: char,
       ),
     );
     setState(() {});
@@ -128,7 +202,7 @@ class _MyGridViewState extends State<MyGridView> {
     db.delete(name);
     for (var i = 0; i < buttons.length - 1; i++) {
       var b = buttons[i] as MyButton2;
-      if (b.c.name == name) {
+      if (b.oc.name == name) {
         buttons.removeAt(i);
         break;
       }

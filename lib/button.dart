@@ -7,41 +7,41 @@ import 'db.dart';
 import 'detail_page.dart';
 
 class MyButton2 extends StatefulWidget {
-  Character c;
+  final Character oc;
   final VoidCallback onLongPress;
-  MyButton2({Key? key, required this.c, required this.onLongPress}) : super(key: key);
+  const MyButton2({Key? key, required this.oc, required this.onLongPress})
+      : super(key: key);
 
   @override
-  State<MyButton2> createState() {
-    return _MyButton2State();
-  }
+  State<MyButton2> createState() => _MyButton2State();
 }
 
 class _MyButton2State extends State<MyButton2> {
   File? imageFile;
   bool loading = false;
+  late Character c;
 
   _MyButton2State();
 
   Future<bool> update() async {
     final now = DateTime.now();
     DateTime todayAt6 = DateTime(now.year, now.month, now.day, 6, 0, 0);
-    if(now.hour < 6){
+    if (now.hour < 6) {
       todayAt6 = todayAt6.subtract(const Duration(days: 1));
     }
-    if (!widget.c.update!.isAfter(todayAt6)) {
+    if (!c.update!.isAfter(todayAt6)) {
       try {
-        widget.c = await get(widget.c.name);
+        c = await get(c.name);
       } catch (e) {
         return true;
       }
       final db = await DB.getInstance();
-      await db.update(widget.c);
+      await db.update(c);
       setState(() {
-        imageFile = widget.c.imgFile;
+        imageFile = c.imgFile;
       });
-    }else{
-      final file =await widget.c.getImageFile();
+    } else {
+      final file = await c.getImageFile();
       setState(() {
         imageFile = file;
       });
@@ -52,7 +52,8 @@ class _MyButton2State extends State<MyButton2> {
   @override
   void initState() {
     super.initState();
-    imageFile = widget.c.imgFile;
+    c = widget.oc;
+    imageFile = c.imgFile;
     if (imageFile == null) {
       setState(() {
         loading = true;
@@ -76,7 +77,7 @@ class _MyButton2State extends State<MyButton2> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(),
-              Text(widget.c.name, softWrap: false),
+              Text(c.name, softWrap: false),
             ],
           ),
         ),
@@ -99,7 +100,7 @@ class _MyButton2State extends State<MyButton2> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.sync_problem, size: 60),
-              Text(widget.c.name, softWrap: false),
+              Text(c.name, softWrap: false),
             ],
           ),
         ),
@@ -109,7 +110,7 @@ class _MyButton2State extends State<MyButton2> {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SecondPage(c: widget.c)),
+          MaterialPageRoute(builder: (context) => SecondPage(c: c)),
         );
       },
       onLongPress: widget.onLongPress,
@@ -117,8 +118,8 @@ class _MyButton2State extends State<MyButton2> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.file(widget.c.imgFile!),
-            Text(widget.c.name, softWrap: false),
+            Image.file(c.imgFile!),
+            Text(c.name, softWrap: false),
           ],
         ),
       ),

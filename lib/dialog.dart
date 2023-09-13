@@ -5,10 +5,10 @@ import 'button.dart';
 class MyFormDialog extends StatefulWidget {
   final List<Widget> buttons;
 
-  MyFormDialog({super.key, required this.buttons});
+  const MyFormDialog({super.key, required this.buttons});
 
   @override
-  _MyFormDialogState createState() => _MyFormDialogState();
+  State<MyFormDialog> createState() => _MyFormDialogState();
 }
 
 class _MyFormDialogState extends State<MyFormDialog> {
@@ -106,7 +106,7 @@ class _MyFormDialogState extends State<MyFormDialog> {
                   }
                   for (var i = 0; i < widget.buttons.length - 1; i++) {
                     var b = widget.buttons[i] as MyButton2;
-                    if (b.c.name.toLowerCase() == value.toLowerCase()) {
+                    if (b.oc.name.toLowerCase() == value.toLowerCase()) {
                       return '角色已经添加';
                     }
                   }

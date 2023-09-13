@@ -27,7 +27,7 @@ class SecondPage extends StatelessWidget {
         Text('成就值：${c.achievementPoints} (排名${c.achievementRank})'),
         Text('联盟等级：${c.legionLevel} (排名${c.legionRank})'),
         Text('联盟战斗力：${c.legionPower! ~/ 1000000}m (每日${c.legionCoinPerDay}币)'),
-        Text('联盟币上限：'),
+        const Text('联盟币上限：'),
         const SizedBox(height: 20),
         Text('参照最近1天到达$nextLevel还有$oneDayExpect天'),
         //BarChartSample3(),
