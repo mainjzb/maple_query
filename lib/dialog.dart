@@ -5,10 +5,10 @@ import 'button.dart';
 class MyFormDialog extends StatefulWidget {
   final List<Widget> buttons;
 
-  MyFormDialog({super.key, required this.buttons});
+  const MyFormDialog({super.key, required this.buttons});
 
   @override
-  _MyFormDialogState createState() => _MyFormDialogState();
+  State<MyFormDialog> createState() => _MyFormDialogState();
 }
 
 class _MyFormDialogState extends State<MyFormDialog> {
