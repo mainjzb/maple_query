@@ -25,7 +25,68 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const HomePage(),
+      // home: const HomePage(),
+      home: const MyApp2(),
+    );
+  }
+}
+
+class MyApp2 extends StatefulWidget {
+  const MyApp2({super.key});
+
+  @override
+  State<MyApp2> createState() => _MyApp2State();
+}
+
+class _MyApp2State extends State<MyApp2> {
+  var _selectedIndex = 0;
+  var childWidget = const [
+    HomePage(),
+    Text('selectedIndex: 1'),
+    Text('selectedIndex: 2'),
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      //row 做为 body 布局
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (int index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            labelType: NavigationRailLabelType.all,
+            destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.favorite),
+                selectedIcon: Icon(Icons.favorite),
+                label: Text('First'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.book),
+                selectedIcon: Icon(Icons.book),
+                label: Text('Second'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.star),
+                selectedIcon: Icon(Icons.star),
+                label: Text('Third'),
+              ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // This is the main content.
+          //Expanded 占满剩下屏幕空间
+          Expanded(
+            child: Center(
+              child: childWidget[_selectedIndex],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
