@@ -34,7 +34,7 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
           future: PackageInfo.fromPlatform(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("maple_query");
+              return const Text("maple_query");
             }
             return Text("maple_query ${snapshot.data?.version}");
           },
@@ -85,7 +85,7 @@ class _MyGridViewState extends State<MyGridView> {
     buttons.add(OutlinedButton(
       onPressed: () async {
         var c = await showDialog(
-         context: context,
+          context: context,
           builder: (BuildContext context) {
             return MyFormDialog(
               buttons: buttons,
@@ -117,7 +117,7 @@ class _MyGridViewState extends State<MyGridView> {
       buttons.length - 1,
       MyButton2(
         onLongPress: () => delete(char.name),
-        c: char,
+        oc: char,
       ),
     );
     setState(() {});
@@ -128,7 +128,7 @@ class _MyGridViewState extends State<MyGridView> {
     db.delete(name);
     for (var i = 0; i < buttons.length - 1; i++) {
       var b = buttons[i] as MyButton2;
-      if (b.c.name == name) {
+      if (b.oc.name == name) {
         buttons.removeAt(i);
         break;
       }
