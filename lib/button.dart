@@ -110,7 +110,29 @@ class _MyButton2State extends State<MyButton2> {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SecondPage(c: c)),
+          // MaterialPageRoute(builder: (context) => SecondPage(c: c)),
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                SecondPage(c: c),
+            transitionDuration: const Duration(milliseconds: 600), //动画时间为500毫秒
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
+
+              final tween = Tween(begin: begin, end: end);
+              final curvedAnimation = CurvedAnimation(
+                parent: animation,
+                curve: curve,
+              );
+
+              return SlideTransition(
+                position: tween.animate(curvedAnimation),
+                child: child,
+              );
+            },
+          ),
         );
       },
       onLongPress: widget.onLongPress,

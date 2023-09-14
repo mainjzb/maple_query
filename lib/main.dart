@@ -107,22 +107,21 @@ class _HomePageState extends State<HomePage> {
         WidgetBuilder builder;
         switch (settins.name) {
           default:
-            builder = (context) => Scaffold(
-                  appBar: AppBar(
-                    title: FutureBuilder(
-                      future: PackageInfo.fromPlatform(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Text("maple_query");
-                        }
-                        return Text("maple_query ${snapshot.data?.version}");
-                      },
-                    ),
-                  ),
-                  body: const MyGridView(),
+            builder = (context) => const Scaffold(
+                  // appBar: AppBar(
+                  //   title: FutureBuilder(
+                  //     future: PackageInfo.fromPlatform(),
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return const Text("maple_query");
+                  //       }
+                  //       return Text("maple_query ${snapshot.data?.version}");
+                  //     },
+                  //   ),
+                  // ),
+                  body: MyGridView(),
                 );
-            ;
             break;
         }
         return MaterialPageRoute(builder: builder);
