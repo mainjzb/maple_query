@@ -26,29 +26,26 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // home: const HomePage(),
-      home: const MyApp2(),
+      home: const LeftBarScaffold(),
     );
   }
 }
 
-class MyApp2 extends StatefulWidget {
-  const MyApp2({super.key});
+class LeftBarScaffold extends StatefulWidget {
+  const LeftBarScaffold({super.key});
 
   @override
-  State<MyApp2> createState() => _MyApp2State();
+  State<LeftBarScaffold> createState() => _LeftBarScaffoldState();
 }
 
-class _MyApp2State extends State<MyApp2> {
+class _LeftBarScaffoldState extends State<LeftBarScaffold> {
   var _selectedIndex = 0;
   late List<Widget> childWidget = const [
-    HomePage(
+    NavigatorWrap(
       MyGridView(),
-      //key: UniqueKey(),
     ),
-    HomePage(
+    NavigatorWrap(
       NewsListScreen(),
-      //key: UniqueKey(),
     ),
     PageDetails(title: '123'),
   ];
@@ -56,19 +53,45 @@ class _MyApp2State extends State<MyApp2> {
   final PageController _controller = PageController(initialPage: 0);
 
   @override
-  void initState() {
-    super.initState();
-
-    // childWidget = const [
-    //   PageDetails(title: '首页'),
-    //   PageDetails(title: '消息'),
-    //   PageDetails(title: '我的'),
-    // ];
-    //_controller = PageController(initialPage: _selectedIndex);
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final mainWidget = PageView(
+      physics: const NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      controller: _controller,
+      children: childWidget,
+    );
+
+    if (screenWidth < screenHeight) {
+      return Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+              _controller.jumpToPage(index);
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              backgroundColor: Colors.blue,
+              icon: Icon(Icons.home),
+              label: "首页",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.message),
+              label: "消息",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              label: "购物车",
+            ),
+          ],
+        ),
+        body: mainWidget,
+      );
+    }
     return Scaffold(
       //row Scaffold(做为 body 布局
       body: Row(
@@ -103,22 +126,7 @@ class _MyApp2State extends State<MyApp2> {
           const VerticalDivider(thickness: 1, width: 1),
           // This is the main content.
           //Expanded 占满剩下屏幕空间
-          Expanded(
-            child: PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              // 设置控制器
-              controller: _controller,
-              // 设置子项集
-              children: childWidget,
-              // 添加页面滑动改变后，去改变索引变量刷新页面来更新底部导航
-              onPageChanged: (value) {
-                setState(() {
-                  _selectedIndex = value;
-                });
-              },
-            ),
-          ),
+          Expanded(child: mainWidget),
         ],
       ),
     );
@@ -145,21 +153,22 @@ class HomePage2 extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class NavigatorWrap extends StatefulWidget {
   final Widget w;
-  const HomePage(this.w, {super.key});
+  const NavigatorWrap(this.w, {super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<NavigatorWrap> createState() => _NavigatorWrapState();
 }
 
-class _HomePageState extends State<HomePage>
+class _NavigatorWrapState extends State<NavigatorWrap>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Navigator(
       onGenerateRoute: (RouteSettings settins) {
         WidgetBuilder builder;
