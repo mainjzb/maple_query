@@ -26,16 +26,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LeftBarScaffold(),
+      home: const SideBarScaffold(),
     );
   }
-}
-
-class LeftBarScaffold extends StatefulWidget {
-  const LeftBarScaffold({super.key});
-
-  @override
-  State<LeftBarScaffold> createState() => _LeftBarScaffoldState();
 }
 
 class BarItem {
@@ -46,7 +39,14 @@ class BarItem {
   const BarItem(this.child, this.title, this.icon);
 }
 
-class _LeftBarScaffoldState extends State<LeftBarScaffold> {
+class SideBarScaffold extends StatefulWidget {
+  const SideBarScaffold({super.key});
+
+  @override
+  State<SideBarScaffold> createState() => _SideBarScaffoldState();
+}
+
+class _SideBarScaffoldState extends State<SideBarScaffold> {
   var _selectedIndex = 0;
 
   final List<BarItem> childWidget = const [
@@ -105,26 +105,6 @@ class _LeftBarScaffoldState extends State<LeftBarScaffold> {
           Expanded(child: mainWidget),
         ],
       ),
-    );
-  }
-}
-
-class HomePage2 extends StatelessWidget {
-  final Widget w;
-  const HomePage2(this.w, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Navigator(
-      onGenerateRoute: (RouteSettings settins) {
-        WidgetBuilder builder;
-        switch (settins.name) {
-          default:
-            builder = (context) => Scaffold(body: w);
-            break;
-        }
-        return MaterialPageRoute(builder: builder);
-      },
     );
   }
 }
