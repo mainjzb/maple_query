@@ -38,15 +38,31 @@ class LeftBarScaffold extends StatefulWidget {
   State<LeftBarScaffold> createState() => _LeftBarScaffoldState();
 }
 
+class BarItem {
+  final Widget child;
+  final String title;
+  final Icon icon;
+
+  const BarItem(this.child, this.title, this.icon);
+}
+
 class _LeftBarScaffoldState extends State<LeftBarScaffold> {
   var _selectedIndex = 0;
-  late List<Widget> childWidget = const [
-    NavigatorWrap(MyGridView()),
-    NavigatorWrap(NewsListScreen()),
-    PageDetails(title: '123'),
+
+  final List<BarItem> childWidget = const [
+    BarItem(NavigatorWrap(MyGridView()), "query", Icon(Icons.favorite)),
+    BarItem(NavigatorWrap(NewsListScreen()), "news", Icon(Icons.message)),
+    BarItem(PageDetails(title: '123'), "test", Icon(Icons.book)),
   ];
 
   final PageController _controller = PageController(initialPage: 0);
+
+  void onTap(index) {
+    setState(() {
+      _selectedIndex = index;
+      _controller.jumpToPage(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,69 +72,36 @@ class _LeftBarScaffoldState extends State<LeftBarScaffold> {
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical,
       controller: _controller,
-      children: childWidget,
+      children: childWidget.map((e) => e.child).toList(),
     );
 
     if (screenWidth < screenHeight) {
+      final items = childWidget
+          .map((e) => BottomNavigationBarItem(icon: e.icon, label: e.title))
+          .toList();
       return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-              _controller.jumpToPage(index);
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-              backgroundColor: Colors.blue,
-              icon: Icon(Icons.home),
-              label: "首页",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: "消息",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: "购物车",
-            ),
-          ],
+          onTap: onTap,
+          items: items,
         ),
         body: mainWidget,
       );
     }
+    final items = childWidget
+        .map((e) =>
+            NavigationRailDestination(icon: e.icon, label: Text(e.title)))
+        .toList();
     return Scaffold(
-      //row Scaffold(做为 body 布局
       body: Row(
         children: <Widget>[
           NavigationRail(
             selectedIndex: _selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex = index;
-                _controller.jumpToPage(index);
-              });
-            },
+            onDestinationSelected: onTap,
             labelType: NavigationRailLabelType.all,
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.favorite),
-                label: Text('First'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.book),
-                label: Text('Second'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.star),
-                label: Text('Third'),
-              ),
-            ],
+            destinations: items,
           ),
           const VerticalDivider(thickness: 1, width: 1),
-          // This is the main content.
-          //Expanded 占满剩下屏幕空间
           Expanded(child: mainWidget),
         ],
       ),
