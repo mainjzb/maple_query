@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'nx_news.dart';
 
 import 'dialog.dart';
 import 'character.dart';
@@ -40,15 +41,36 @@ class MyApp2 extends StatefulWidget {
 
 class _MyApp2State extends State<MyApp2> {
   var _selectedIndex = 0;
-  var childWidget = const [
-    HomePage(),
-    Text('selectedIndex: 1'),
-    Text('selectedIndex: 2'),
+  late List<Widget> childWidget = const [
+    HomePage(
+      MyGridView(),
+      //key: UniqueKey(),
+    ),
+    HomePage(
+      NewsListScreen(),
+      //key: UniqueKey(),
+    ),
+    PageDetails(title: '123'),
   ];
+
+  final PageController _controller = PageController(initialPage: 0);
+
+  @override
+  void initState() {
+    super.initState();
+
+    // childWidget = const [
+    //   PageDetails(title: '首页'),
+    //   PageDetails(title: '消息'),
+    //   PageDetails(title: '我的'),
+    // ];
+    //_controller = PageController(initialPage: _selectedIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //row 做为 body 布局
+      //row Scaffold(做为 body 布局
       body: Row(
         children: <Widget>[
           NavigationRail(
@@ -56,6 +78,7 @@ class _MyApp2State extends State<MyApp2> {
             onDestinationSelected: (int index) {
               setState(() {
                 _selectedIndex = index;
+                _controller.jumpToPage(index);
               });
             },
             labelType: NavigationRailLabelType.all,
@@ -81,8 +104,19 @@ class _MyApp2State extends State<MyApp2> {
           // This is the main content.
           //Expanded 占满剩下屏幕空间
           Expanded(
-            child: Center(
-              child: childWidget[_selectedIndex],
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              // 设置控制器
+              controller: _controller,
+              // 设置子项集
+              children: childWidget,
+              // 添加页面滑动改变后，去改变索引变量刷新页面来更新底部导航
+              onPageChanged: (value) {
+                setState(() {
+                  _selectedIndex = value;
+                });
+              },
             ),
           ),
         ],
@@ -91,37 +125,47 @@ class _MyApp2State extends State<MyApp2> {
   }
 }
 
+class HomePage2 extends StatelessWidget {
+  final Widget w;
+  const HomePage2(this.w, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (RouteSettings settins) {
+        WidgetBuilder builder;
+        switch (settins.name) {
+          default:
+            builder = (context) => Scaffold(body: w);
+            break;
+        }
+        return MaterialPageRoute(builder: builder);
+      },
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Widget w;
+  const HomePage(this.w, {super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      initialRoute: '/',
       onGenerateRoute: (RouteSettings settins) {
         WidgetBuilder builder;
         switch (settins.name) {
           default:
-            builder = (context) => const Scaffold(
-                  // appBar: AppBar(
-                  //   title: FutureBuilder(
-                  //     future: PackageInfo.fromPlatform(),
-                  //     builder: (context, snapshot) {
-                  //       if (snapshot.connectionState ==
-                  //           ConnectionState.waiting) {
-                  //         return const Text("maple_query");
-                  //       }
-                  //       return Text("maple_query ${snapshot.data?.version}");
-                  //     },
-                  //   ),
-                  // ),
-                  body: MyGridView(),
-                );
+            builder = (context) => Scaffold(body: widget.w);
             break;
         }
         return MaterialPageRoute(builder: builder);
@@ -208,4 +252,39 @@ class _MyGridViewState extends State<MyGridView> {
     }
     setState(() {});
   }
+}
+
+class PageDetails extends StatefulWidget {
+  const PageDetails({Key? key, required this.title}) : super(key: key);
+  final String title;
+
+  @override
+  State<PageDetails> createState() => _PageDetailsState();
+}
+
+/// 这里混入了 AutomaticKeepAliveClientMixin
+class _PageDetailsState extends State<PageDetails>
+    with AutomaticKeepAliveClientMixin {
+  int count = 0;
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    // 这里的打印可以记录一下，后面会用到
+    print('PageDetails build title:${widget.title}');
+    return Scaffold(
+      body: GestureDetector(
+        onTap: () {
+          count += 1;
+          setState(() {});
+        },
+        child: Center(
+          child: Text('${widget.title} count:$count'),
+        ),
+      ),
+    );
+  }
+
+  // 设置 true 期望保持页面状态
+  @override
+  bool get wantKeepAlive => true;
 }
