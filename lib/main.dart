@@ -41,12 +41,8 @@ class LeftBarScaffold extends StatefulWidget {
 class _LeftBarScaffoldState extends State<LeftBarScaffold> {
   var _selectedIndex = 0;
   late List<Widget> childWidget = const [
-    NavigatorWrap(
-      MyGridView(),
-    ),
-    NavigatorWrap(
-      NewsListScreen(),
-    ),
+    NavigatorWrap(MyGridView()),
+    NavigatorWrap(NewsListScreen()),
     PageDetails(title: '123'),
   ];
 
@@ -108,17 +104,14 @@ class _LeftBarScaffoldState extends State<LeftBarScaffold> {
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.favorite),
-                selectedIcon: Icon(Icons.favorite),
                 label: Text('First'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.book),
-                selectedIcon: Icon(Icons.book),
                 label: Text('Second'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.star),
-                selectedIcon: Icon(Icons.star),
                 label: Text('Third'),
               ),
             ],
