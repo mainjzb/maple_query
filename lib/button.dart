@@ -114,7 +114,8 @@ class _MyButton2State extends State<MyButton2> {
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 SecondPage(c: c),
-            transitionDuration: const Duration(milliseconds: 600), //动画时间为500毫秒
+            transitionDuration: const Duration(milliseconds: 200),
+            reverseTransitionDuration: const Duration(milliseconds: 200),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);
